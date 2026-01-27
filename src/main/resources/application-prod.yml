@@ -1,0 +1,55 @@
+server:
+  error:
+    whitelabel:
+      enabled: false
+    include-message: never
+    include-stacktrace: never
+
+  port: ${SERVER_PORT:80}
+
+spring:
+  application:
+    name: gateway
+
+  config:
+    import: optional:file:.env[.properties]
+
+  datasource:
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    url: ${DB_URL}
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+            scope:
+              - openid
+              - email
+              - profile
+
+  threads:
+    virtual:
+      enabled: true
+
+  session:
+    timeout: 90m
+    redis:
+      namespace: burger-order-app:sessions
+
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+      password: ${REDIS_PASSWORD}
+
+  liquibase:
+    change-log: db/changelog/db.changelog-master.yaml
