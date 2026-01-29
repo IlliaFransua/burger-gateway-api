@@ -18,12 +18,14 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(ResourceNotFoundException.class)
   public ResponseEntity<ErrorResponse> handleResourceNotFoundException(
       ResourceNotFoundException e, HttpServletRequest request) {
+    log.warn("ResourceNotFoundException: {}", e);
     return buildResponse(HttpStatus.NOT_FOUND, "Not Found", e.getMessage(), request);
   }
 
   @ExceptionHandler(ResourceAccessException.class)
   public ResponseEntity<ErrorResponse> handleResourceAccessException(
       ResourceAccessException e, HttpServletRequest request) {
+    log.warn("ResourceAccessException: {}", e);
     return buildResponse(
         HttpStatus.BAD_GATEWAY,
         "Bad gateway",
@@ -34,12 +36,14 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(NoHandlerFoundException.class)
   public ResponseEntity<ErrorResponse> handleNoHandlerFoundException(
       NoHandlerFoundException e, HttpServletRequest request) {
+    log.warn("NoHandlerFoundException: {}", e);
     return buildResponse(HttpStatus.NOT_FOUND, "Not Found", "Path not supported", request);
   }
 
   @ExceptionHandler(NoResourceFoundException.class)
   public ResponseEntity<ErrorResponse> handleNoResourcseFoundException(
       NoResourceFoundException e, HttpServletRequest request) {
+    log.warn("NoResourceFoundException: {}", e);
     return buildResponse(
         HttpStatus.NOT_FOUND, "Not Found", "Requested resource not found", request);
   }
