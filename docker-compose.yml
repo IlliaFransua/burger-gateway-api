@@ -139,7 +139,7 @@ services:
       start_period: 60s
 
   burger-order-ui:
-    image: "europe-west6-docker.pkg.dev/burger-order-485523/docker-repo/burger-order-ui:c8be88fd2d135e1ba9c54e45555d04ec273622b4"
+    image: "europe-west6-docker.pkg.dev/burger-order-485523/docker-repo/burger-order-ui:ae9455b70c9394c7b7b0588f7efcdc6f192cac7flatest"
     container_name: burger-order-ui
     expose:
       - "8082"

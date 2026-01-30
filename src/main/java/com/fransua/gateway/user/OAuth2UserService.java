@@ -4,14 +4,14 @@ import com.fransua.gateway.user.dto.UserResponse;
 import java.time.Instant;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
-import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
-import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
+import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
+import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserService;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
-import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Service;
 
 @Service
-public class OAuth2UserService extends DefaultOAuth2UserService {
+public class OAuth2UserService extends OidcUserService {
 
   private final UserDao userDao;
 
@@ -20,13 +20,15 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
   }
 
   @Override
-  public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
-    OAuth2User oAuth2User = super.loadUser(userRequest);
+  public OidcUser loadUser(OidcUserRequest userRequest) throws OAuth2AuthenticationException {
+    OidcUser oidcUser = super.loadUser(userRequest);
 
-    String id = oAuth2User.getAttribute("sub");
-    String email = oAuth2User.getAttribute("email");
-    String name = oAuth2User.getAttribute("name");
-    String picture = oAuth2User.getAttribute("picture");
+    System.out.println("!!! OIDC LOAD USER CALLED !!!");
+
+    String id = oidcUser.getAttribute("sub");
+    String email = oidcUser.getAttribute("email");
+    String name = oidcUser.getAttribute("name");
+    String picture = oidcUser.getAttribute("picture");
 
     User user = userDao.findById(id).orElse(new User());
     user.setId(id);
@@ -37,7 +39,7 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
 
     userDao.save(user);
 
-    return oAuth2User;
+    return oidcUser;
   }
 
   public UserResponse getUserById(String id) {

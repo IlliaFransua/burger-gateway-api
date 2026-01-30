@@ -59,7 +59,8 @@ public class SecutiryConfig {
                 oauth2
                     .defaultSuccessUrl("/", false)
                     .failureUrl("/login-error")
-                    .userInfoEndpoint(userInfo -> userInfo.userService(customerOAuth2UserService)));
+                    .userInfoEndpoint(
+                        userInfo -> userInfo.oidcUserService(customerOAuth2UserService)));
 
     return http.build();
   }
