@@ -47,8 +47,6 @@ public class SecutiryConfig {
                         "/favicon.ico",
                         "/login-error")
                     .permitAll()
-                    .requestMatchers("/api/order/**", "/api/burger/**")
-                    .permitAll()
                     .anyRequest()
                     .authenticated())
         .exceptionHandling(

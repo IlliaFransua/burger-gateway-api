@@ -139,9 +139,8 @@ services:
       start_period: 60s
 
   burger-order-ui:
-    image: "europe-west6-docker.pkg.dev/burger-order-485523/docker-repo/burger-order-ui:0.0.1-SNAPSHOT"
+    image: "europe-west6-docker.pkg.dev/burger-order-485523/docker-repo/burger-order-ui:c8be88fd2d135e1ba9c54e45555d04ec273622b4"
     container_name: burger-order-ui
-    pull_policy: never
     expose:
       - "8082"
     depends_on:
@@ -156,7 +155,6 @@ services:
 
   gateway:
     image: "europe-west6-docker.pkg.dev/burger-order-485523/docker-repo/gateway:0.0.1-SNAPSHOT"
-    pull_policy: never
     ports:
       - "${GATEWAY_EXTERNAL_PORT}:${GATEWAY_INTERNAL_PORT}"
     depends_on:

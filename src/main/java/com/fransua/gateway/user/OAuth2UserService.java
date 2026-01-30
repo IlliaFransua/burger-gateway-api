@@ -1,7 +1,9 @@
 package com.fransua.gateway.user;
 
+import com.fransua.gateway.user.dto.UserResponse;
 import java.time.Instant;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
@@ -36,5 +38,16 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
     userDao.save(user);
 
     return oAuth2User;
+  }
+
+  public UserResponse getUserById(String id) {
+    User user =
+        userDao
+            .findById(id)
+            .orElseThrow(
+                () ->
+                    new AuthenticationCredentialsNotFoundException(
+                        "User with id [%s] not found".formatted(id)));
+    return new UserResponse(user.getId(), user.getEmail(), user.getName(), user.getPicture());
   }
 }
