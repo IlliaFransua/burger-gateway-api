@@ -68,7 +68,8 @@ public class SecutiryConfig {
   @Bean
   CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration configuration = new CorsConfiguration();
-    configuration.setAllowedOrigins(List.of("http://localhost", "http://127.0.0.1"));
+    configuration.setAllowedOrigins(
+        List.of("http://localhost", "http://127.0.0.1", "http://34.65.82.241.nip.io"));
     configuration.setAllowedMethods(List.of("*"));
     configuration.setAllowedHeaders(List.of("*"));
     configuration.setAllowCredentials(true);

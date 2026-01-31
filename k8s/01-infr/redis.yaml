@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    io.kompose.service: redis
+  name: redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: redis
+  template:
+    metadata:
+      labels:
+        io.kompose.service: redis
+    spec:
+      serviceAccountName: burger-sa
+      containers:
+        - name: redis
+          image: redis:7-alpine
+          env:
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: burger-secrets-sync
+                  key: REDIS_PASSWORD
+          command: ["sh", "-c", 'redis-server --requirepass "$REDIS_PASSWORD"']
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
+              cpu: "250m"
+              memory: "512Mi"
+          livenessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - 'redis-cli -a "$REDIS_PASSWORD" ping'
+            failureThreshold: 5
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            timeoutSeconds: 5
+          ports:
+            - containerPort: 6379
+              protocol: TCP
+      restartPolicy: Always
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.38.0 (HEAD)
+  labels:
+    io.kompose.service: redis
+  name: redis
+spec:
+  ports:
+    - name: "6379"
+      port: 6379
+      targetPort: 6379
+  selector:
+    io.kompose.service: redis

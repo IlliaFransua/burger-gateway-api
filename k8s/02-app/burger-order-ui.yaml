@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    io.kompose.service: burger-order-ui
+  name: burger-order-ui
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: burger-order-ui
+  template:
+    metadata:
+      labels:
+        io.kompose.service: burger-order-ui
+    spec:
+      serviceAccountName: burger-sa
+      containers:
+        - name: burger-order-ui
+          image: europe-west6-docker.pkg.dev/burger-order-485523/docker-repo/burger-order-ui:latest
+          ports:
+            - containerPort: 8082
+              protocol: TCP
+          livenessProbe:
+            tcpSocket:
+              port: 8082
+            failureThreshold: 5
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            timeoutSeconds: 5
+      restartPolicy: Always
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    io.kompose.service: burger-order-ui
+  name: burger-order-ui
+spec:
+  ports:
+    - name: "8082"
+      port: 8082
+      targetPort: 8082
+  selector:
+    io.kompose.service: burger-order-ui

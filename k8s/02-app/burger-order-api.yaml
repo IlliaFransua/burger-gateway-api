@@ -1,0 +1,150 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    io.kompose.service: burger-order-api
+  name: burger-order-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: burger-order-api
+  template:
+    metadata:
+      labels:
+        io.kompose.service: burger-order-api
+    spec:
+      serviceAccountName: burger-sa
+      containers:
+        - name: burger-order-api
+          image: europe-west6-docker.pkg.dev/burger-order-485523/docker-repo/burger-order-api:0.0.1-SNAPSHOT
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: prod
+
+            - name: BURGER_API_PORT
+              value: "8081"
+
+            - name: POSTGRES_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: burger-secrets-sync
+                  key: POSTGRES_HOST
+
+            - name: POSTGRES_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: burger-secrets-sync
+                  key: POSTGRES_PORT
+
+            - name: POSTGRES_DB
+              valueFrom:
+                secretKeyRef:
+                  name: burger-secrets-sync
+                  key: POSTGRES_DB
+
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: burger-secrets-sync
+                  key: POSTGRES_USER
+
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: burger-secrets-sync
+                  key: POSTGRES_PASSWORD
+
+            - name: ELASTIC_HOST
+              value: elasticsearch
+
+            - name: ELASTIC_PORT
+              value: "9200"
+
+            - name: ELASTIC_USERNAME
+              value: elastic
+
+            - name: ELASTIC_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: burger-secrets-sync
+                  key: ELASTIC_PASSWORD
+
+            - name: RABBITMQ_USER
+              valueFrom:
+                secretKeyRef:
+                  name: burger-secrets-sync
+                  key: RABBITMQ_USER
+
+            - name: RABBITMQ_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: burger-secrets-sync
+                  key: RABBITMQ_PASSWORD
+
+            - name: EMAIL_HOST
+              value: smtp.gmail.com
+
+            - name: EMAIL_PORT
+              value: "587"
+
+            - name: EMAIL_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: burger-secrets-sync
+                  key: EMAIL_USERNAME
+
+            - name: EMAIL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: burger-secrets-sync
+                  key: EMAIL_PASSWORD
+
+            - name: EMAIL_RETRY_DELAY
+              value: PT5M
+
+            - name: ORDER_REPORT_EMAIL_RECIPIENT
+              valueFrom:
+                secretKeyRef:
+                  name: burger-secrets-sync
+                  key: ORDER_REPORT_EMAIL_RECIPIENT
+
+            - name: RABBITMQ_HOST
+              value: rabbitmq
+
+            - name: RABBITMQ_NODE_PORT
+              value: "5672"
+
+          livenessProbe:
+            exec:
+              command:
+                - wget
+                - -q
+                - --spider
+                - http://localhost:8081/ping
+            failureThreshold: 5
+            initialDelaySeconds: 60
+            periodSeconds: 15
+            timeoutSeconds: 5
+          ports:
+            - containerPort: 8081
+              protocol: TCP
+      restartPolicy: Always
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.38.0 (HEAD)
+  labels:
+    io.kompose.service: burger-order-api
+  name: burger-order-api
+spec:
+  ports:
+    - name: "8081"
+      port: 8081
+      targetPort: 8081
+  selector:
+    io.kompose.service: burger-order-api
