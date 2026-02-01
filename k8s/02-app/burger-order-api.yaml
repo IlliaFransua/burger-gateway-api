@@ -18,6 +18,7 @@ spec:
       containers:
         - name: burger-order-api
           image: europe-west6-docker.pkg.dev/burger-order-485523/docker-repo/burger-order-api:latest
+          imagePullPolicy: Always
           env:
             - name: SPRING_PROFILES_ACTIVE
               value: prod

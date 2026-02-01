@@ -24,6 +24,7 @@ spec:
       containers:
         - name: gateway
           image: europe-west6-docker.pkg.dev/burger-order-485523/docker-repo/gateway:0.0.1-SNAPSHOT
+          imagePullPolicy: Always
           env:
             # Gateway Settings
             - name: SPRING_PROFILES_ACTIVE

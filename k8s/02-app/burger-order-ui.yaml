@@ -18,6 +18,7 @@ spec:
       containers:
         - name: burger-order-ui
           image: europe-west6-docker.pkg.dev/burger-order-485523/docker-repo/burger-order-ui:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 8082
               protocol: TCP
